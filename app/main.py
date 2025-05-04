@@ -1,5 +1,10 @@
-from sqlalchemy import Column, Integer, String, MetaData, Table, text
-from db import engine, SessionLocal
+import os
+from sqlalchemy import Column, Integer, String, MetaData, Table, text, create_engine
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
+SessionLocal = sessionmaker(bind=engine)
 
 metadata = MetaData()
 
@@ -18,7 +23,9 @@ def seed_and_read():
         conn.execute(todos.insert().values(title="docka is amazing (from postgresql)!"))
         result = conn.execute(text("SELECT id, title FROM todos"))
         for row in result:
-            print(dict(row))
+            print("-" * 100)
+            print(row)
+            print("-" * 100)
 
 if __name__ == "__main__":
     prepare_db()
